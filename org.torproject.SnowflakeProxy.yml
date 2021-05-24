@@ -1,0 +1,28 @@
+app-id: org.torproject.SnowflakeProxy
+runtime: org.freedesktop.Platform
+runtime-version: '20.08'
+sdk: org.freedesktop.Sdk
+sdk-extensions:
+  - org.freedesktop.Sdk.Extension.golang
+command: snowflake-proxy
+finish-args:
+  - --share=network
+modules:
+  - name: snowflake-proxy
+    buildsystem: simple
+    build-options:
+      prefix: /usr/lib/sdk/golang
+      prepend-path: /usr/lib/sdk/golang/bin
+      build-args:
+        - --share=network
+    build-commands:
+      - "cd src/git.torproject.org/pluggable-transports/snowflake.git;
+         go mod download -x;
+         cd proxy;
+         go build"
+      - "install -Dm 755 src/git.torproject.org/pluggable-transports/snowflake.git/proxy/proxy ${FLATPAK_DEST}/bin/snowflake-proxy"
+    sources:
+      - type: git
+        url: https://git.torproject.org/pluggable-transports/snowflake.git
+        tag: main
+        dest: src/git.torproject.org/pluggable-transports/snowflake.git
